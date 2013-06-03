@@ -1,9 +1,9 @@
-/* bignumber.js v1.0.1 https://github.com/MikeMcl/bignumber.js/LICENCE */
+/* bignumber.js v1.1.0 https://github.com/MikeMcl/bignumber.js/LICENCE */
 ;(function ( global ) {
     'use strict';
 
     /*
-      bignumber.js v1.0.1
+      bignumber.js v1.1.0
       A Javascript library for arbitrary-precision arithmetic.
       https://github.com/MikeMcl/bignumber.js
       Copyright (c) 2012 Michael Mclaughlin <M8ch88l@gmail.com>
@@ -303,7 +303,7 @@
     BigNumber['ROUND_HALF_EVEN'] = 6;
     BigNumber['ROUND_HALF_CEIL'] = 7;
     BigNumber['ROUND_HALF_FLOOR'] = 8;
-    BigNumber['ROUND_EUCLID'] = 9; // For MODULO_MODE only
+    BigNumber['ROUND_EUCLID'] = 9;              // MODULO_MODE only
 
 
     /*
@@ -311,7 +311,7 @@
      *
      * Accept an object or an argument list, with one or many of the following
      * properties or parameters respectively:
-     * [ DECIMAL_PLACES [, ROUNDING_MODE [, EXPONENTIAL_AT [, RANGE [, ERRORS ]]]]]
+     * [ DECIMAL_PLACES [, ROUNDING_MODE [, EXPONENTIAL_AT [, RANGE [, ERRORS [, MODULO_MODE ]]]]]]
      *
      * E.g.
      * BigNumber.config(20, 4) is equivalent to
@@ -417,6 +417,20 @@
             }
         }
         r[p] = ERRORS;
+
+        // [MODULO_MODE] {number} Integer, 0 to 9 inclusive.
+        if ( has( p = 'MODULO_MODE' ) ) {
+
+            if ( inRange( v, 0, 9 ) ) {
+                MODULO_MODE = v | 0
+            } else {
+
+                // 'config() MODULO_MODE not an integer: {v}'
+                // 'config() MODULO_MODE out of range: {v}'
+                ifExceptionsThrow( v, p, c )
+            }
+        }
+        r[p] = MODULO_MODE;
 
         return r
     };
