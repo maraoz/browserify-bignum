@@ -69,7 +69,7 @@
          * truncated division, floored division, Euclidian division and IEEE 754 remainder.
          * Although other modes are possible, they may not give useful results.
          */
-        MODULO_MODE = 1,
+        MODULO_MODE = 1,                             // 0 to 9
 
         // EXPONENTIAL_AT : [TO_EXP_NEG , TO_EXP_POS]
 
@@ -1207,58 +1207,58 @@
     /*
      *   n % 0 =  N
      *   n % N =  N
+     *   n % I =  n
      *   0 % n =  0
      *  -0 % n = -0
      *   0 % 0 =  N
      *   0 % N =  N
+     *   0 % I =  0
      *   N % n =  N
      *   N % 0 =  N
      *   N % N =  N
+     *   N % I =  N
+     *   I % n =  N
+     *   I % 0 =  N
+     *   I % N =  N
+     *   I % I =  N
      *
      * Return a new BigNumber whose value is the value of this BigNumber modulo
      * the value of BigNumber(y, b).
      */
     P['modulo'] = P['mod'] = function ( y, b ) {
-        var x = this,
+        var q,    // quotient
+            x = this,
             xc = x['c'],
             yc = ( id = 9, y = new BigNumber( y, b ) )['c'],
-            xs = x['s'],
             ys = y['s'],
-            i = DECIMAL_PLACES,
-            j = ROUNDING_MODE,
-            q = null; // quotient
+            dp = DECIMAL_PLACES,
+            rm = ROUNDING_MODE;
 
-        // Is x or xs NaN, or y zero?
-        b = !xs || !ys || yc && !yc[0];
-
-        if ( b || xc && !xc[0] ) {
+        // Return NaN if x is Infinity or NaN, or y is NaN or zero,
+        // else return x if y is Infinity or x is zero.
+        if ( ( b = !xc || !ys || yc && !yc[0] ) || !yc || xc && !xc[0] ) {
             return new BigNumber( b ? NaN : x )
         }
 
-        // Is y Infinity?
-        b = y['c'] === null
+        DECIMAL_PLACES = 0;
 
+        if ( MODULO_MODE == 9 ) {
 
-        if (b) {
-            return new BigNumber(x)
+            // Euclidian division: q = sign(y) * floor(x / abs(y))
+            // r = x - qy    where  0 <= r < abs(y)
+            ROUNDING_MODE = 3;
+            y['s'] = 1;
+            q = x['div'](y);
+            q['s'] *= ( y['s'] = ys );
         } else {
-            if (MODULO_MODE === 9) {
-                // Euclidian division: sign(y) * floor(x / abs(y))
-                ROUNDING_MODE = BigNumber['ROUND_FLOOR'];
-                y['s'] = 1;
-            } else {
-                ROUNDING_MODE = MODULO_MODE;
-            }
-
-            DECIMAL_PLACES = 0;
-            var q = x['div'](y);
-
-            q['s'] *= (y['s'] = ys);
-            DECIMAL_PLACES = i;
-            ROUNDING_MODE = j;
-
-            return this['minus'](q['times'](y));
+            ROUNDING_MODE = MODULO_MODE;
+            q = x['div'](y);
         }
+
+        DECIMAL_PLACES = dp;
+        ROUNDING_MODE = rm;
+
+        return this['minus']( q['times'](y) )
     };
 
 
