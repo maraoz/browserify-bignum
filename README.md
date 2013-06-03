@@ -2,6 +2,10 @@
 # bignumber.js #
 
 A Javascript library for arbitrary-precision decimal and non-decimal arithmetic.  
+
+**This branch is under development.  
+It allows a rounding mode to be specified for the modulo operation.   
+The documentation has not yet been updated, and it has had limited testing only.**
      
 ## Features
 
@@ -210,6 +214,9 @@ Thank you
 See LICENCE.
 
 ## Change Log
+
+####1.1.0
+* Added MODULO_MODE (contributed by Lachlan Hunt)   
 
 ####1.0.1
 * Bugfix: error messages with incorrect method name 
