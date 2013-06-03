@@ -49,7 +49,8 @@ var count = (function mod(BigNumber) {
         ROUNDING_MODE : 4,
         ERRORS : false,
         RANGE : 1E9,
-        EXPONENTIAL_AT : [-7, 21]
+        EXPONENTIAL_AT : [-7, 21],
+        MODULO_MODE : 1
     });
 
     T(1, 0, N);
@@ -112,15 +113,14 @@ var count = (function mod(BigNumber) {
     T(-1, 2, '-1');
     T(-1, -2, '-1');
 
-    // Due to Javascript's internal representation of 0.1 the next 4 results
-    // match BigDecimal's remainder method, but not Javascript's % operator:
-    //
-    // 1 % -0.1                                      //  0.09999999999999995
-    // new BigNumber(1).mod(-0.1)                       // '0'
-    //
-    // 0.1.toFixed(18)                               // '0.100000000000000006'
-    // new BigNumber(1).mod('-0.100000000000000006')    // '0.099999999999999946'
+    /*
+       Due to Javascript's binary floating point representation of 0.1 the next
+       4 results (after this commented section) match BigDecimal's remainder
+       method, but not Javascript's % operator.
 
+       0.1.toFixed(18)                                // '0.100000000000000006'
+       new BigNumber(1).mod('-0.100000000000000006')  // '0.099999999999999946'
+     */
     T( 1, -0.1, '0');               // JS:   0.09999999999999995
     T(-1, -0.1, '0');               // JS:  -0.09999999999999995
     T( 2, -0.1, '0');               // JS:   0.0999999999999999
@@ -1898,6 +1898,81 @@ var count = (function mod(BigNumber) {
     T('-5.48175104358179142491638230233e+25', '-1.52434523822871140847e-11', '-8.8309288545189098888e-12');
     T('1.07984359784457855e+6', '2.92533631912192887348822954567386e+32', '1079843.59784457855');
     T('-5.343344296409307514661858172266262866671109159598323e+9', '2.3273061846552018803169584402231121660442419923712e+8', '-223270690.167863377964549603775416101373776776381683');
+
+
+    /*
+      MODULO_MODE additions.
+
+      Tests cases taken from:
+
+        Division and Modulus for Computer Scientists, DAAN LEIJEN
+        http://research.microsoft.com/en-us/um/people/daan/download/papers/divmodnote-letter.pdf
+
+        On the Definition of Integer Division and Modulus in Programming Languages, BOYKO B. BANTCHEV
+        http://www.math.bas.bg/bantchev/articles/divmod.pdf
+
+        MSDN Math.IEEERemainder Method
+        http://msdn.microsoft.com/en-us/library/system.math.ieeeremainder.aspx
+    */
+
+    // Truncated division (ROUND_DOWN)
+    BigNumber.config( { MODULO_MODE : 1 } );
+    T( 8, 3, '2');
+    T( 8, -3, '2');
+    T( -8, 3, '-2');
+    T( -8, -3, '-2');
+    T( 1, 2, '1');
+    T( 1, -2, '1');
+    T( -1, 2, '-1');
+    T( -1, -2, '-1');
+    T( 34, 5, '4');
+    T( 34, -5, '4');
+    T( -34, 5, '-4');
+    T( -34, -5, '-4');
+
+    // Floored division (ROUND_FLOOR).
+    BigNumber.config( { MODULO_MODE : 3 } );
+    T( 8, 3, '2');
+    T( 8, -3, '-1');
+    T( -8, 3, '1');
+    T( -8, -3, '-2');
+    T( 1, 2, '1');
+    T( 1, -2, '-1');
+    T( -1, 2, '1');
+    T( -1, -2, '-1');
+    T( 34, 5, '4');
+    T( 34, -5, '-1');
+    T( -34, 5, '1');
+    T( -34, -5, '-4');
+
+    // Euclidean division (ROUND_EUCLID).
+    BigNumber.config( { MODULO_MODE : 9 } );
+    T( 8, 3, '2');
+    T( 8, -3, '2');
+    T( -8, 3, '1');
+    T( -8, -3, '1');
+    T( 1, 2, '1');
+    T( 1, -2, '1');
+    T( -1, 2, '1');
+    T( -1, -2, '1');
+    T( 34, 5, '4');
+    T( 34, -5, '4');
+    T( -34, 5, '1');
+    T( -34, -5, '1');
+
+    // IEEE 754 Remainder division (ROUND_HALF_EVEN).
+    BigNumber.config( { MODULO_MODE : 6 } );
+    T( 3, 2, '-1');
+    T( 4, 2, '0');
+    T( 10, 3, '1');
+    T( 11, 3, '-1');
+    T( 27, 4, '-1');
+    T( 28, 5, '-2');
+    T( 17.8, 4, '1.8');
+    T( 17.8, 4.1, '1.4');
+    T( -16.3, 4.1, '0.1');
+    T( 17.8, -4.1, '1.4');
+    T( -17.8, -4.1, '-1.4');
 
     log('\n ' + passed + ' of ' + total + ' tests passed in ' + (+new Date() - start) + ' ms \n');
     return [passed, total];;
