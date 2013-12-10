@@ -1420,6 +1420,18 @@
         return e < 0 ? ONE['div'](y) : y;
     };
 
+    
+    /*
+     * Return a BigNumber whose value is the value of this BigNumber raised to
+     * the power m modulo n.
+     *
+     * m {BigNumber} the value to take the power of
+     * n {BigNumber} the value to modulo by
+     */
+    P['powm'] = function ( m, n ) {
+        return this.pow(m).mod(n);
+    };
+
 
     /*
      * Return a new BigNumber whose value is the value of this BigNumber
