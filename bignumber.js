@@ -835,6 +835,13 @@
         return x;
     };
 
+    /*
+     * Return the bit length of the number.
+     */
+    P['bitLength'] = function () {
+        return this.toString(2).length;
+    };
+
 
     /*
      * Return a new BigNumber whose value is the value of this BigNumber
