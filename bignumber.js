@@ -991,7 +991,7 @@
      * Return true if the value of this BigNumber is greater than or equal to
      * the value of BigNumber(n, b), otherwise returns false.
      */
-    P['greaterThanOrEqualTo'] = P['gte'] = function ( n, b ) {
+    P['greaterThanOrEqualTo'] = P['gte'] = P['gt'] = function ( n, b ) {
         id = 5;
         return ( b = this['cmp']( n, b ) ) == 1 || b === 0;
     };
@@ -1047,7 +1047,7 @@
      * Return true if the value of this BigNumber is less than or equal to the
      * value of BigNumber(n, b), otherwise returns false.
      */
-    P['lessThanOrEqualTo'] = P['lte'] = function ( n, b ) {
+    P['lessThanOrEqualTo'] = P['lte'] = P['le'] = function ( n, b ) {
         id = 7;
         return ( b = this['cmp']( n, b ) ) == -1 || b === 0;
     };
@@ -1073,7 +1073,7 @@
      * Return a new BigNumber whose value is the value of this BigNumber minus
      * the value of BigNumber(y, b).
      */
-    P['minus'] = function ( y, b ) {
+    P['minus'] = P['sub'] = function ( y, b ) {
         var d, i, j, xLTy,
             x = this,
             a = x['s'];
@@ -1275,7 +1275,7 @@
      * Return a new BigNumber whose value is the value of this BigNumber plus
      * the value of BigNumber(y, b).
      */
-    P['plus'] = function ( y, b ) {
+    P['plus'] = P['add'] = function ( y, b ) {
         var d,
             x = this,
             a = x['s'];
@@ -1609,7 +1609,7 @@
      * Return a new BigNumber whose value is the value of this BigNumber times
      * the value of BigNumber(y, b).
      */
-    P['times'] = function ( y, b ) {
+    P['times'] = P['mul'] = function ( y, b ) {
         var c,
             x = this,
             xc = x['c'],
