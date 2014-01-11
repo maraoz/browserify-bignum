@@ -291,7 +291,7 @@ BigNumber['ROUND_HALF_FLOOR'] = 8;
 /*
  * Create an instance from a Buffer
  */
-BigNumber['fromBuffer'] = function () {
+BigNumber['fromBuffer'] = function (opts) {
 
     if (!opts) opts = {};
 
