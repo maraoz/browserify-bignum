@@ -2092,7 +2092,7 @@ P['toString'] = P['toS'] = function ( b ) {
 };
 
 P['toNumber'] = function () {
-  return parseInt(P['toString'](), 10);
+  return parseInt(this['toString'](), 10);
 };
 
 
