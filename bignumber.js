@@ -2091,6 +2091,10 @@ P['toString'] = P['toS'] = function ( b ) {
     return x['s'] < 0 ? '-' + str : str;
 };
 
+P['toNumber'] = function () {
+  return parseInt(this.toString(), 10);
+};
+
 
 /*
  * Return as toString, but do not accept a base argument.
