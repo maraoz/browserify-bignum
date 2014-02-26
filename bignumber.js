@@ -116,6 +116,9 @@ function BigNumber( n, b ) {
         }
     }
 
+    // Accept empty string as zero
+    if (n === '') n = 0;
+
     // If number, check if minus zero.
     if ( typeof n != 'string' ) {
         n = ( isNum = typeof n == 'number' ||
